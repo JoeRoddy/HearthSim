@@ -8,12 +8,12 @@ public class Game {
     private boolean turnOver = false;
     private Deck gDeck;
 
-    public Game(Deck deck,int simulations) {
+    public Game(Deck deck,int numSimulations) {
         this.gDeck = deck;
-        for (int x = 0;x<simulations;x++){
+        for (int x = 0;x<numSimulations;x++){
             totalDamage+=play();
         }
-        averageDamage = (double)totalDamage/(double)simulations;
+        averageDamage = (double)totalDamage/(double)numSimulations;
     }
 
     public int play() {
@@ -145,6 +145,7 @@ public class Game {
             handContentUpdater(cardDrawn,true);
         }
     }
+  
 
     public void turnUpkeep() {
         unspentMana += (turn - mana);

@@ -1,4 +1,10 @@
+import java.io.BufferedWriter;
 import java.util.ArrayList;
+import java.io.FileWriter;
+import java.io.PrintWriter;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class HearthSim {
     static Card leper = new Card(cardTypes.ONEDROP, 1, 2, 0);
@@ -7,9 +13,17 @@ public class HearthSim {
     static Card kill = new Card(cardTypes.BURN, 3, 0, 5);
 
     public static void main(String[] args) {
-        Deck toTest = new Deck("15-09-04-02");
-        Game testGames = new Game(toTest,10000);
-        System.out.println("Average dmg for our tests:"+testGames.getAverageDamage());
+        ArrayList<int[]> allDeckCombinations = generateDeckCombinations(30);
+        ArrayList<Deck> results = new ArrayList<Deck>();
+        for(int[] deckCombo : allDeckCombinations){
+            Deck currentDeck = new Deck(deckCombo);
+            addByDamage(currentDeck,results);
+        }
+        appendToSimulationResults("Deck Code   -  Average T5 Damage");
+        for(Deck deck : results){
+            appendToSimulationResults(deck.getDeckCode()+" - Avg. Dmg. : "+deck.getAvgDmg());
+        }
+
     }
 
     public static ArrayList<int[]> generateDeckCombinations(int n){
@@ -24,5 +38,35 @@ public class HearthSim {
             }
         }
         return answer;
+    }
+    public static void appendToSimulationResults(String stringToAdd){
+        BufferedWriter bw = null;
+
+        try {
+            // APPEND MODE SET HERE
+            bw = new BufferedWriter(new FileWriter("SimulationResults.txt", true));
+            bw.write(stringToAdd);
+            bw.newLine();
+            bw.flush();
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+        } finally {                       // always close the file
+            if (bw != null) try {
+                bw.close();
+            } catch (IOException ioe2) {
+                // just ignore it
+            }
+        } // end try/catch/finally
+    }
+    public static ArrayList<Deck> addByDamage(Deck deckToAdd, ArrayList<Deck> deckList){
+        if(deckList==null){deckList.add(deckToAdd); return deckList;}
+        for(int x=0;x<deckList.size();x++){
+            if(deckToAdd.getAvgDmg()>deckList.get(x).getAvgDmg()){
+                deckList.add(x,deckToAdd); return deckList;
+            }
+        }
+        //If lowest avg. damage, appends the deck to the end of the list and returns it.
+        deckList.add(deckToAdd);
+        return deckList;
     }
 }
