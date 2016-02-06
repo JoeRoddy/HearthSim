@@ -57,12 +57,21 @@ public class Game {
         } else if (numOne >= 3) {
             playXDrop(cardTypes.ONEDROP, 3);//Plays 3 1-drops
             return;
-        } else if (numThree>0) {
-            playXDrop(cardTypes.THREEDROP, 1); //Plays a 3-drop if you have it
+        }
+        if (numTwo == 1) {
+            playXDrop(cardTypes.TWODROP, 1);
+        }
+        if (numOne == 2) {
+            playXDrop(cardTypes.ONEDROP, 2);
+        }
+        if (numThree > 0) {
+            playXDrop(cardTypes.THREEDROP, 1);
             return;
         }
-        playXDrop(cardTypes.TWODROP, 1);
-        if (numOne>0) {
+        if (numTwo>1){
+            playXDrop(cardTypes.TWODROP,1);
+        }
+        if (numOne > 0) {
             playXDrop(cardTypes.ONEDROP, 2);
             return;
         }
