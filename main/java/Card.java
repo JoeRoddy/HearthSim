@@ -1,12 +1,9 @@
-/**
- * Created by Joe on 1/15/16.
- */
 public class Card {
     private int cost, power, burst;
-    private String name;
+    private cardTypes type;
 
-    public Card(String name, int cost, int power, int burst){
-        this.name=name;
+    public Card(cardTypes type, int cost, int power, int burst){
+        this.type=type;
         this.cost=cost;
         this.power=power;
         this.burst=burst;
@@ -21,6 +18,8 @@ public class Card {
     public int getBurst(){
         return this.burst;
     }
-    public String getName(){ return this.name; }
-
+    public cardTypes getType() {return type;}
+}
+enum cardTypes{
+    ONEDROP,TWODROP,THREEDROP,BURN
 }
