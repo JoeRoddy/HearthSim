@@ -102,6 +102,9 @@ public class Deck {
         return codeToReturn;
     }
 
+    public void returnCardsToDeck(ArrayList<Card> cardsToReturn){
+        currentDeck.addAll(cardsToReturn);
+    }
     public String getDeckCode() {
         return deckCode;
     }
@@ -109,6 +112,8 @@ public class Deck {
     public double getAvgDmg() {
         return avgDmg;
     }
+
+
 
     public void setCurrentDeck(ArrayList<Card> currentDeck) {
         this.currentDeck = currentDeck;

@@ -1,19 +1,19 @@
 import java.util.ArrayList;
 
 public class Game {
-    private int damage, turn, mana, totalPower, numBurn, numOne, numTwo, numThree, unspentMana,totalDamage;
+    private int damage, turn, mana, totalPower, numBurn, numOne, numTwo, numThree, unspentMana, totalDamage;
     private double averageDamage;
     private ArrayList<Card> gHand;
 
     private boolean turnOver = false;
     private Deck gDeck;
 
-    public Game(Deck deck,int numSimulations) {
+    public Game(Deck deck, int numSimulations) {
         this.gDeck = deck;
-        for (int x = 0;x<numSimulations;x++){
-            totalDamage+=play();
+        for (int x = 0; x < numSimulations; x++) {
+            totalDamage += play();
         }
-        averageDamage = (double)totalDamage/(double)numSimulations;
+        averageDamage = (double) totalDamage / (double) numSimulations;
     }
 
     public int play() {
@@ -25,6 +25,7 @@ public class Game {
         // deck from last game.
         gDeck.shuffle();
         drawOpener(3);
+        basicMulligan();
         turn1Brain();
         turn2Brain();
         turn3Brain();
@@ -68,8 +69,8 @@ public class Game {
             playXDrop(cardTypes.THREEDROP, 1);
             return;
         }
-        if (numTwo>1){
-            playXDrop(cardTypes.TWODROP,1);
+        if (numTwo > 1) {
+            playXDrop(cardTypes.TWODROP, 1);
         }
         if (numOne > 0) {
             playXDrop(cardTypes.ONEDROP, 2);
@@ -113,7 +114,7 @@ public class Game {
         damage += cardPlayed.getBurst();
         gHand.remove(cardIndex);
 
-        handContentUpdater(cardPlayed,false);
+        handContentUpdater(cardPlayed, false);
     }
 
 
@@ -151,10 +152,59 @@ public class Game {
         for (int x = 0; x < 3; x++) {
             Card cardDrawn = gDeck.draw();
             gHand.add(cardDrawn);
-            handContentUpdater(cardDrawn,true);
+            handContentUpdater(cardDrawn, true);
         }
     }
-  
+
+    public void basicMulligan() {
+        int currentOne = numOne;
+        int currentTwo = numTwo;
+        int numMulled = 0;
+        ArrayList<Card> mulliganedCards = new ArrayList<Card>();
+        for (int x = 0; x < gHand.size(); x++) {
+            Card currentCard = gHand.get(x);
+            if (currentCard.getType() == cardTypes.BURN) {
+                handContentUpdater(currentCard, false);
+                mulliganedCards.add(currentCard);
+                gHand.remove(x);
+                numMulled++;
+                x--;
+            } else if (currentCard.getType() == cardTypes.THREEDROP) {
+                if (currentOne < 1 || currentTwo < 1) {
+                    handContentUpdater(currentCard, false);
+                    mulliganedCards.add(currentCard);
+                    gHand.remove(x);
+                    numMulled++;
+                    x--;
+                }
+            } else if (currentCard.getType() == cardTypes.TWODROP) {
+                if ((currentTwo > 1 && currentOne < 1) || currentTwo > 2) {
+                    handContentUpdater(currentCard, false);
+                    mulliganedCards.add(currentCard);
+                    gHand.remove(x);
+                    numMulled++;
+                    x--;
+                    currentTwo--;
+                }
+            } else if (currentCard.getType() == cardTypes.ONEDROP) {
+                if (currentOne != 3 && (currentOne > 1 && currentTwo < 1)) {
+                    handContentUpdater(currentCard, false);
+                    mulliganedCards.add(currentCard);
+                    gHand.remove(x);
+                    numMulled++;
+                    x--;
+                    currentOne--;
+                }
+            }
+        }
+        for (int i = 0; i < numMulled; i++) {
+            Card cardDrawn = gDeck.draw();
+            gHand.add(cardDrawn);
+            handContentUpdater(cardDrawn, true);
+        }
+        gDeck.returnCardsToDeck(mulliganedCards);
+        gDeck.shuffle();
+    }
 
     public void turnUpkeep() {
         unspentMana += (turn - mana);
@@ -162,7 +212,7 @@ public class Game {
         mana = turn;
         gHand.add(gDeck.draw());
         Card drawn = gHand.get(gHand.size() - 1);
-        handContentUpdater(drawn,true);
+        handContentUpdater(drawn, true);
         damage += totalPower;
         turnOver = false;
     }
