@@ -41,7 +41,7 @@ public class Game {
 
     public void turn2Brain() {
         turnUpkeep();
-        if (playXDrop(cardTypes.TWODROP, 1) > 1) {//plays a 2-drop, if one is in hand
+        if (playXDrop(cardTypes.TWODROP, 1) > 0) {//plays a 2-drop, if one is in hand
             return;
         }
         //If no 2-drop in hand, plays up to two 1-drops
@@ -104,17 +104,7 @@ public class Game {
         damage += cardPlayed.getBurst();
         gHand.remove(cardIndex);
 
-        if (cardPlayed.getType() == cardTypes.ONEDROP) {
-            numOne--;
-            return;
-        } else if (cardPlayed.getType() == cardTypes.TWODROP) {
-            numTwo--;
-            return;
-        } else if (cardPlayed.getType() == cardTypes.THREEDROP) {
-            numTwo--;
-            return;
-        }
-        numBurn--;
+        handContentUpdater(cardPlayed,false);
     }
 
 
@@ -152,7 +142,7 @@ public class Game {
         for (int x = 0; x < 3; x++) {
             Card cardDrawn = gDeck.draw();
             gHand.add(cardDrawn);
-            handContentUpdater(cardDrawn);
+            handContentUpdater(cardDrawn,true);
         }
     }
 
@@ -162,24 +152,40 @@ public class Game {
         mana = turn;
         gHand.add(gDeck.draw());
         Card drawn = gHand.get(gHand.size() - 1);
-        handContentUpdater(drawn);
+        handContentUpdater(drawn,true);
         damage += totalPower;
         turnOver = false;
     }
 
 
-    public void handContentUpdater(Card cardArg) {
+    public void handContentUpdater(Card cardArg, boolean added) {
         if (cardArg.getType().equals(cardTypes.ONEDROP)) {
-            numOne++;
+            if (added) {
+                numOne++;
+            } else {
+                numOne--;
+            }
             return;
         } else if (cardArg.getType().equals(cardTypes.TWODROP)) {
-            numTwo++;
+            if (added) {
+                numTwo++;
+            } else {
+                numTwo--;
+            }
             return;
         } else if (cardArg.getType().equals(cardTypes.THREEDROP)) {
-            numThree++;
+            if (added) {
+                numThree++;
+            } else {
+                numThree--;
+            }
             return;
         } else if (cardArg.getType().equals(cardTypes.BURN)) {
-            numBurn++;
+            if (added) {
+                numBurn++;
+            } else {
+                numBurn--;
+            }
             return;
         }
         System.out.println("Error in handContentUpdater().  Card passed w/ incorrect cardType property");
@@ -188,101 +194,6 @@ public class Game {
     public double getAverageDamage() {
         return averageDamage;
     }
-
-    public int getMana() {
-        return mana;
-    }
-
-    public void setMana(int passedMana) {
-        this.mana = passedMana;
-    }
-
-    public int getDamage() {
-        return damage;
-    }
-
-    public int getTotalPower() {
-        return totalPower;
-    }
-
-    public void setTotalPower(int passedPower) {
-        this.totalPower = passedPower;
-    }
-
-    public int getTurn() {
-        return turn;
-    }
-
-    public String getName() {
-        return this.gDeck.getDeckCode();
-    }
 }
-    /*
-    public int playOneDrop(int limit) {
-        //plays up to limit # of 1-drops
-        int numPlayed = 0;
-        for (int x = 0; x < gHand.size(); x++) {
-            Card thisCard = gHand.get(x);
-            if (thisCard.getType() == cardTypes.ONEDROP && mana > 0) {
-                playCard(thisCard, x);
-                numPlayed++;
-                if (numPlayed == limit) {
-                    if (mana == 0) {
-                        turnOver = true;
-                    }
-                    return numPlayed;
-                }
-            }
-        }
-        return numPlayed;
-    }
-
-    public int playTwoDrop(int limit) {
-        //plays up to limit # of 2-drops
-        int numPlayed = 0;
-        for (int x = 0; x < gHand.size(); x++) {
-            Card thisCard = gHand.get(x);
-            if (thisCard.getType() == cardTypes.TWODROP && mana > 1) {
-                playCard(thisCard, x);
-                numPlayed++;
-                if (numPlayed == limit) {
-                    if (mana == 0) {
-                        turnOver = true;
-                    }
-                    return numPlayed;
-                }
-            }
-        }
-        return numPlayed;
-    }
-
-    public int playThreeDrop() {
-        for (int x = 0; x < gHand.size(); x++) {
-            Card thisCard = gHand.get(x);
-            if (gHand.get(x).getType() == cardTypes.THREEDROP) {
-                playCard(thisCard, x);
-                if (mana == 0) {
-                    turnOver = true;
-                }
-                return 1;
-            }
-        }
-        return 0;
-    }
-
-    public int playBurn() {
-        for (int x = 0; x < gHand.size(); x++) {
-            Card thisCard = gHand.get(x);
-            if (gHand.get(x).getType() == cardTypes.BURN) {
-                playCard(thisCard, x);
-                if (mana == 0) {
-                    turnOver = true;
-                }
-                return 1;
-            }
-        }
-        return 0;
-    }
-    */
 
 

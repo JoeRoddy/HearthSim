@@ -11,26 +11,6 @@ public class Deck {
         shuffle();
     }
 
-    public void shuffle() {
-        int index;
-        Card temp;
-        Random random = new Random();
-        for (int i = currentDeck.size() - 1; i > 0; i--) {
-            index = random.nextInt(i + 1);
-            temp = currentDeck.get(index);
-            currentDeck.set(index, currentDeck.get(i));
-            currentDeck.set(i, temp);
-        }
-    }
-
-    public Card draw() {
-        //gets the top Card in the deck, removes it from the deck, and returns that Card object.
-        int lastPosition = currentDeck.size() - 1;
-        Card cardToDraw = currentDeck.get(lastPosition);
-        currentDeck.remove(lastPosition);
-        return cardToDraw;
-    }
-
     public ArrayList<Card> deckBuilder(String deckCode) {
         //ie:  String name = "09-09-09-03" : 9 1-drops, 9 2-drops, 9 3-drops, 3 burn
 
@@ -52,6 +32,26 @@ public class Deck {
             builtDeck.add(HearthSim.kill);
         }
         return builtDeck;
+    }
+
+    public void shuffle() {
+        int index;
+        Card temp;
+        Random random = new Random();
+        for (int i = currentDeck.size() - 1; i > 0; i--) {
+            index = random.nextInt(i + 1);
+            temp = currentDeck.get(index);
+            currentDeck.set(index, currentDeck.get(i));
+            currentDeck.set(i, temp);
+        }
+    }
+
+    public Card draw() {
+        //gets the top Card in the deck, removes it from the deck, and returns that Card object.
+        int lastPosition = currentDeck.size() - 1;
+        Card cardToDraw = currentDeck.get(lastPosition);
+        currentDeck.remove(lastPosition);
+        return cardToDraw;
     }
 
     public String getDeckCode() {
